@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mark Attendance | Sheep Shed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: linear-gradient(to right, #dbeafe, #fef9c3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .card h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #1e3a8a;
+    }
+
+    .date,
+    .user-email {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      background-color: #10b981;
+      color: white;
+      padding: 14px 28px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      background-color: #059669;
+    }
+
+    .btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    #statusMessage {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success i,
+    .error i {
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1><i class="fas fa-calendar-check"></i> Mark Attendance</h1>
+    <div class="user-email" id="userEmail">Loading user...</div>
+    <div class="date" id="todayDate"></div>
+    <button class="btn" id="markAttendanceBtn" disabled>Loading...</button>
+    <p id="statusMessage"></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      addDoc,
+      serverTimestamp,
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    // Firebase config (corrected storageBucket field)
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_rPTK-dEGNlz3kfFx3WTS579Fz0xt0nk",
+      authDomain: "attendance-system-31208.firebaseapp.com",
+      projectId: "attendance-system-31208",
+      storageBucket: "attendance-system-31208.appspot.com",
+      messagingSenderId: "340644375850",
+      appId: "1:340644375850:web:a13eabd90f4dfbcdd80253",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const userEmailElem = document.getElementById("userEmail");
+    const todayDateElem = document.getElementById("todayDate");
+    const markBtn = document.getElementById("markAttendanceBtn");
+    const statusMsg = document.getElementById("statusMessage");
+
+    const today = new Date();
+    const dateStr = today.toISOString().split("T")[0];
+    todayDateElem.textContent = `Today's Date: ${dateStr}`;
+
+    let currentUser = null;
+
+    function disableButton(text) {
+      markBtn.disabled = true;
+      markBtn.textContent = text;
+    }
+
+    function enableButton(text) {
+      markBtn.disabled = false;
+      markBtn.textContent = text;
+    }
+
+    async function checkAttendanceForToday(userId) {
+      try {
+        console.log("Checking attendance for user:", userId, "date:", dateStr);
+        const attendanceRef = collection(db, "sheepAttendance");
+        const q = query(
+          attendanceRef,
+          where("userId", "==", userId),
+          where("date", "==", dateStr)
+        );
+        const querySnapshot = await getDocs(q);
+        console.log("Query snapshot size:", querySnapshot.size);
+        return !querySnapshot.empty;
+      } catch (err) {
+        console.error("Error checking attendance:", err);
+        return false;
+      }
+    }
+
+    async function markAttendance() {
+      disableButton("Marking...");
+      statusMsg.textContent = "";
+
+      try {
+        await addDoc(collection(db, "sheepAttendance"), {
+          userId: currentUser.uid,
+          userEmail: currentUser.email,
+          date: dateStr,
+          timestamp: serverTimestamp(),
+        });
+
+        statusMsg.innerHTML = `<i class="fas fa-check-circle"></i> Attendance marked successfully for ${dateStr}`;
+        statusMsg.className = "success";
+        disableButton("✅ Attendance Marked");
+      } catch (error) {
+        console.error("Error marking attendance:", error);
+        statusMsg.innerHTML = `<i class="fas fa-times-circle"></i> Failed to mark attendance. Please try again.`;
+        statusMsg.className = "error";
+        enableButton("Mark Attendance");
+      }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      console.log("Auth state changed:", user);
+      if (!user) {
+        alert("You must be logged in to mark attendance.");
+        window.location.href = "index.html";
+        return;
+      }
+      currentUser = user;
+      userEmailElem.textContent = `Logged in as: ${user.email}`;
+
+      const alreadyMarked = await checkAttendanceForToday(user.uid);
+      console.log("Already marked today?", alreadyMarked);
+
+      if (alreadyMarked) {
+        disableButton("✅ Attendance Already Marked");
+        statusMsg.innerHTML = `<i class="fas fa-info-circle"></i> You have already marked attendance today.`;
+        statusMsg.className = "success";
+      } else {
+        enableButton("Mark Attendance");
+        markBtn.addEventListener("click", markAttendance);
+      }
+    });
+  </script>
+</body>
+</html>

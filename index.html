@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SATHISH SHEEP FARM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+/* Reset and base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #f7f9f6;
+  color: #2c3e50;
+  line-height: 1.6;
+  font-size: 16px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+header {
+  background: linear-gradient(90deg, #2e8b57, #238b4b);
+  padding: 25px 15px;
+  text-align: center;
+  color: #e9f5e9;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+header h1 {
+  font-weight: 700;
+  font-size: 2.5rem;
+  letter-spacing: 1.2px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Navigation */
+nav {
+  background-color: #1e4d2b;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 14px 0;
+  box-shadow: inset 0 -3px 8px rgba(0,0,0,0.1);
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: #dbe9db;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 10px 22px;
+  border-radius: 6px;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  white-space: nowrap;
+}
+
+nav a:hover,
+nav a:focus {
+  background-color: #3da458;
+  color: #fff;
+  box-shadow: 0 0 8px #3da458aa;
+  outline: none;
+}
+
+/* Hero full width image */
+.hero-full {
+  width: 100%;
+  overflow: hidden;
+}
+
+.full-width-img {
+  width: 100%;
+  max-height: 450px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.15);
+  transition: transform 0.4s ease;
+}
+
+.full-width-img:hover {
+  transform: scale(1.03);
+}
+
+/* About Breeds Section */
+.about-breeds {
+  background-color: #fafaf7;
+  margin: 40px auto;
+  padding: 40px 30px;
+  max-width: 900px;
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgb(0 0 0 / 0.08);
+  color: #264d19;
+}
+
+.about-breeds h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  letter-spacing: 0.03em;
+  border-bottom: 2px solid #3ca34d;
+  padding-bottom: 8px;
+}
+
+.about-breeds p {
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+  color: #3b4a1a;
+  font-weight: 500;
+}
+
+.about-breeds h1 {
+  font-size: 1.5rem;
+  margin: 15px 0 12px;
+  font-weight: 700;
+}
+
+.about-breeds ul {
+  list-style-type: disc;
+  padding-left: 24px;
+  color: #2f4d1a;
+}
+
+.about-breeds li {
+  margin-bottom: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Centered hero image */
+.hero-centered {
+  text-align: center;
+  margin: 50px 0 80px;
+}
+
+.centered-img {
+  max-width: 90%;
+  width: 700px;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgb(0 0 0 / 0.12);
+  transition: box-shadow 0.3s ease;
+}
+
+.centered-img:hover {
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.25);
+}
+
+/* Footer */
+footer {
+  background-color: #1c2614;
+  color: #cfd9c7;
+  text-align: center;
+  padding: 18px 15px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  border-top: 1px solid #3b5a27;
+  margin-top: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 2rem;
+  }
+
+  nav {
+    gap: 12px;
+  }
+
+  .about-breeds {
+    margin: 30px 20px;
+    padding: 30px 20px;
+  }
+
+  .hero-centered {
+    margin: 30px 0 60px;
+  }
+
+  .centered-img {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to Sathish Sheep Farm</h1>
+  </header>
+
+  <!-- Matching previous nav bar design -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="feed.html">Feed</a>
+    <a href="login.html">Login</a>
+  </nav>
+
+  <!-- Full width hero image -->
+  <section class="hero hero-full">
+    <img src="images/sheepform.jpg" alt="Sheep Farm" class="full-width-img">
+  </section>
+
+  <!-- Breed info -->
+  <div class="about-breeds">
+    <h3>Sheep Breeds We Grow</h3>
+    <p>We raise a variety of high-quality Indian sheep breeds that are well-suited to our local climate and farming practices:</p>
+    <ul>
+      <h1>Ramanadhapuram White</h1>
+      <li>This is distributed in Ramanadhapuram, Sivagangai, and Virudhunagar districts of Tamilnadu.</li>
+      <li>It is meat purpose breed.</li>
+      <li>It has medium sized body.</li>
+      <li>Majority of them are white in color.</li>
+      <li>Certain goats hold black colored stripes all over their body.</li>
+      <li>Adult males have their bent horns, whereas females with absence of horns. Legs are smaller and slender.</li>
+      <li>Adult male average body weight 31kg.</li>
+    </ul>
+  </div>
+
+  <!-- Centered image -->
+  <section class="hero hero-centered">
+    <img src="images/sheep.jpg" alt="Sheep Center" class="centered-img">
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Sheep Shed Management</p>
+  </footer>
+</body>
+</html>

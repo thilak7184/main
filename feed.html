@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feed Details - Sathish Sheep Farm</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+  <style>
+   :root {
+  --bg: #f6f7f9;
+  --card-bg: #ffffff;
+  --muted: #6b7280;
+  --accent: #2f7f3f;
+  --accent-2: #3ca34d;
+  --shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: var(--bg);
+  color: #223;
+}
+
+/* ---------- Header ---------- */
+header {
+  background: linear-gradient(90deg, #238b4a 0%, #1f6a3d 85%);
+  color: #fff;
+  padding: 34px 20px 22px;
+  text-align: center;
+  box-shadow: 0 3px 18px rgba(20, 60, 30, 0.12);
+}
+header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+nav {
+  margin-top: 14px;
+  display: inline-flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+nav a.active,
+nav a:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* ---------- Layout ---------- */
+.page-container {
+  max-width: 1280px;
+  margin: 32px auto;
+  padding: 0 20px 48px;
+  display: flex;
+  gap: 20px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  flex-shrink: 0;
+}
+.sidebar-title {
+  color: #f97316;
+  font-weight: 800;
+  padding-left: 6px;
+  margin-bottom: 10px;
+}
+.sidebar-nav { list-style: none; padding: 0; margin: 0; }
+.sidebar-nav li + li { margin-top: 8px; }
+.sidebar-nav a {
+  display: block;
+  text-decoration: none;
+  color: #fff;
+  background: #ff9700;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  transition: all 0.18s ease;
+}
+.sidebar-nav a:hover {
+  background: #f57c00;
+}
+.sidebar-nav a.active {
+  background: #2f7f3f;
+}
+
+/* ---------- Main ---------- */
+.feed-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.feed-details-title {
+  color: var(--accent);
+  font-size: 26px;
+  font-weight: 800;
+}
+.feed-details-desc {
+  color: #3b4b3a;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Card Grid */
+.feed-cards-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 28px;
+}
+
+/* Card */
+.feed-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+}
+.feed-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.15);
+}
+.thumb {
+  height: 160px;
+  overflow: hidden;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.feed-card:hover .thumb img {
+  transform: scale(1.05);
+}
+
+/* Card Text */
+.feed-card-body {
+  padding: 16px 18px;
+  flex: 1;
+}
+.feed-card-title {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.feed-card-desc {
+  color: #505a50;
+  font-size: 14px;
+  line-height: 1.55;
+  flex: 1;
+}
+.show-more {
+  margin-top: 6px;
+  color: #8b8f94;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+/* Footer Section in Card */
+.feed-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  background: #f9fafb;
+}
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+}
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+.meta .name { font-weight: 700; }
+.meta .source { color: var(--muted); }
+
+/* Footer */
+footer {
+  text-align: center;
+  margin-top: 28px;
+  padding: 22px 12px;
+  color: #7b9190;
+  font-weight: 600;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .page-container { flex-direction: column; }
+}
+@media (max-width: 500px) {
+  nav a { padding: 8px 12px; font-size: 13px; }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Modern Header with Nav -->
+  <header>
+    <h1>Feed Information</h1>
+    <nav>
+      <a href="index.html"><i class="fas fa-home"></i> Home</a>
+      <a href="about.html"><i class="fas fa-user"></i> About</a>
+      <a href="feed.html" class="active"><i class="fas fa-seedling"></i> Feed</a>
+      <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+    </nav>
+  </header>
+
+  <div class="page-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-title">Categories</div>
+      <ul class="sidebar-nav">
+        <li><a href="#" class="active">Feeds Used</a></li>
+      </ul>
+    </aside>
+
+    <!-- Feed Main Content -->
+    <main class="feed-main-content">
+      <div class="feed-details-title">Feed Details</div>
+      <div class="feed-details-desc">
+        Here are the major feeds we use for healthy sheep rearing at Sathish Sheep Farm:
+      </div>
+
+      <!-- Grid of cards (structure unchanged; style updated) -->
+      <div class="feed-cards-row">
+        <div class="feed-card">
+          <div class="thumb"><img src="images/sneha-feed.jpg" alt="Sneha Poultry Feed"></div>
+          <div class="feed-card-body">
+            <div class="feed-card-title">Sneha Poultry Feed</div>
+            <div class="feed-card-desc">A protein-rich supplement that supports growth and health.</div>
+            <!-- optional show more placeholder - DOES NOT change your content -->
+            <a class="show-more" href="#">Show more...</a>
+          </div>
+          <div class="feed-card-footer">
+            <div class="avatar">S</div>
+            <div class="meta">
+              <div class="name">Sneha Feed</div>
+              <div class="source">Supplier</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feed-card">
+          <div class="thumb"><img src="images/ground nut.webp" alt="Groundnut Crop"></div>
+          <div class="feed-card-body">
+            <div class="feed-card-title">Groundnut Crop</div>
+            <div class="feed-card-desc">Used after harvest as a nutritious dry fodder and feed source.</div>
+            <a class="show-more" href="#">Show more...</a>
+          </div>
+          <div class="feed-card-footer">
+            <div class="avatar">G</div>
+            <div class="meta">
+              <div class="name">Groundnut</div>
+              <div class="source">Field</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feed-card">
+          <div class="thumb"><img src="images/ragi.jpg" alt="Ragi Crop"></div>
+          <div class="feed-card-body">
+            <div class="feed-card-title">Ragi Crop</div>
+            <div class="feed-card-desc">Provides energy and fiber, especially during dry seasons.</div>
+            <a class="show-more" href="#">Show more...</a>
+          </div>
+          <div class="feed-card-footer">
+            <div class="avatar">R</div>
+            <div class="meta">
+              <div class="name">Ragi</div>
+              <div class="source">Crop</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feed-card">
+          <div class="thumb"><img src="images/seema sappa.webp" alt="Sema Sappa"></div>
+          <div class="feed-card-body">
+            <div class="feed-card-title">Sema Sappa</div>
+            <div class="feed-card-desc">A local green fodder rich in essential nutrients.</div>
+            <a class="show-more" href="#">Show more...</a>
+          </div>
+          <div class="feed-card-footer">
+            <div class="avatar">S</div>
+            <div class="meta">
+              <div class="name">Sema Sappa</div>
+              <div class="source">Local</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feed-card">
+          <div class="thumb"><img src="images/agisa-aku.jpg" alt="Agisa Aku"></div>
+          <div class="feed-card-body">
+            <div class="feed-card-title">Agisa Aku</div>
+            <div class="feed-card-desc">Traditional leafy greens that promote digestion and overall well-being.</div>
+            <a class="show-more" href="#">Show more...</a>
+          </div>
+          <div class="feed-card-footer">
+            <div class="avatar">A</div>
+            <div class="meta">
+              <div class="name">Agisa Aku</div>
+              <div class="source">Local</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    &copy; 2025 Sheep Shed Management. All rights reserved.
+  </footer>
+
+</body>
+</html>

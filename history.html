@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Attendance History | Sheep Shed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 60px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #1e40af;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    th {
+      background-color: #1e3a8a;
+      color: white;
+    }
+
+    td i {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="fas fa-history"></i> Attendance History</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="attendanceList">
+        <!-- Attendance rows will go here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC_rPTK-dEGNlz3kfFx3WTS579Fz0xt0nk",
+  authDomain: "attendance-system-31208.firebaseapp.com",
+  projectId: "attendance-system-31208",
+  storageBucket: "attendance-system-31208.firebasestorage.app",
+  messagingSenderId: "340644375850",
+  appId: "1:340644375850:web:a13eabd90f4dfbcdd80253"
+};
+
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const attendanceList = document.getElementById("attendanceList");
+
+    async function fetchAttendance() {
+      const q = query(collection(db, "sheepAttendance"), orderBy("timestamp", "desc"));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const date = data.date;
+        const time = data.timestamp?.toDate().toLocaleTimeString() || "N/A";
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${date}</td>
+          <td>${time}</td>
+          <td><i class="fas fa-check-circle"></i> Marked</td>
+        `;
+        attendanceList.appendChild(row);
+      });
+    }
+
+    fetchAttendance();
+  </script>
+</body>
+</html>

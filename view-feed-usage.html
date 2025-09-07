@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Feed Stock Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    main {
+      padding: 40px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h2 { text-align: center; }
+    .stock {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .stock p {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    label, select, input, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+    }
+    input, select {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 12px;
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1a242f;
+    }
+    .note {
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Feed Stock Management</h1>
+  </header>
+
+  <main>
+    <div class="stock">
+      <h2>Current Feed Stock</h2>
+      <p><strong>Sneha Poultry Feed:</strong> <span id="snehaStock">Loading...</span> kg</p>
+      <p><strong>Corn:</strong> <span id="cornStock">Loading...</span> kg</p>
+    </div>
+
+    <form id="usageForm">
+      <h2>Use Feed</h2>
+      <label for="feedType">Select Feed</label>
+      <select id="feedType" required>
+        <option value="">-- Select Feed --</option>
+        <option value="SnehaPoultryFeed">Sneha Poultry Feed</option>
+        <option value="Corn">Corn</option>
+      </select>
+      <label for="amountUsed">Amount Used (kg)</label>
+      <input type="number" id="amountUsed" placeholder="Enter amount in kg" required />
+      <button type="submit">Submit Usage</button>
+    </form>
+
+    <form id="addStockForm">
+      <h2>Add New Stock</h2>
+      <label for="addFeedType">Feed Type</label>
+      <select id="addFeedType" required>
+        <option value="">-- Select Feed --</option>
+        <option value="SnehaPoultryFeed">Sneha Poultry Feed</option>
+        <option value="Corn">Corn</option>
+      </select>
+      <label for="addAmount">New Stock Amount (kg)</label>
+      <input type="number" id="addAmount" placeholder="Enter new stock in kg" required />
+      <button type="submit">Add Stock</button>
+    </form>
+  </main>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, setDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_rPTK-dEGNlz3kfFx3WTS579Fz0xt0nk",
+      authDomain: "attendance-system-31208.firebaseapp.com",
+      projectId: "attendance-system-31208",
+      storageBucket: "attendance-system-31208.firebasestorage.app",
+      messagingSenderId: "340644375850",
+      appId: "1:340644375850:web:a13eabd90f4dfbcdd80253"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const stockFields = {
+      SnehaPoultryFeed: document.getElementById("snehaStock"),
+      Corn: document.getElementById("cornStock")
+    };
+
+    async function loadStock() {
+      for (const feed of Object.keys(stockFields)) {
+        const docRef = doc(db, "feedStock", feed);
+        const snap = await getDoc(docRef);
+        stockFields[feed].innerText = snap.exists() ? snap.data().total + " kg" : "0 kg";
+      }
+    }
+
+    // USE FEED FORM
+    document.getElementById("usageForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const feedType = document.getElementById("feedType").value;
+      const amountUsed = parseFloat(document.getElementById("amountUsed").value);
+
+      const docRef = doc(db, "feedStock", feedType);
+      const snap = await getDoc(docRef);
+      if (!snap.exists()) {
+        alert("Feed type not found in database.");
+        return;
+      }
+
+      const currentStock = snap.data().total;
+      if (amountUsed > currentStock) {
+        alert("Not enough stock available!");
+        return;
+      }
+
+      await updateDoc(docRef, { total: currentStock - amountUsed });
+
+      // ADD TO FEED HISTORY
+      await addDoc(collection(db, "feedHistory"), {
+        type: "usage",
+        feed: feedType === "SnehaPoultryFeed" ? "Sneha Poultry Feed" : "Corn",
+        amount: amountUsed,
+        timestamp: new Date().toISOString()
+      });
+
+      alert("Feed usage recorded successfully.");
+      document.getElementById("usageForm").reset();
+      loadStock();
+    });
+
+    // ADD STOCK FORM
+    document.getElementById("addStockForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const feedType = document.getElementById("addFeedType").value;
+      const newStock = parseFloat(document.getElementById("addAmount").value);
+      const docRef = doc(db, "feedStock", feedType);
+      const snap = await getDoc(docRef);
+
+      const existing = snap.exists() ? snap.data().total : 0;
+      await setDoc(docRef, {
+        total: existing + newStock,
+        lastUpdated: new Date().toISOString()
+      });
+
+      // ADD TO FEED HISTORY
+      await addDoc(collection(db, "feedHistory"), {
+        type: "add",
+        feed: feedType === "SnehaPoultryFeed" ? "Sneha Poultry Feed" : "Corn",
+        amount: newStock,
+        timestamp: new Date().toISOString()
+      });
+
+      alert("Stock added successfully.");
+      document.getElementById("addStockForm").reset();
+      loadStock();
+    });
+
+    // Initial load
+    loadStock();
+  </script>
+</body>
+</html>

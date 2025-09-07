@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+header {
+  background-color: #2e7d32;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+nav a {
+  margin: 0 15px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.hero img {
+  width: 100%;
+  height: auto;  /* Keeps the aspect ratio */
+  display: block;
+  max-height: 600px; /* Optional: to avoid too tall image */
+  object-fit: contain;
+}
+
+.about {
+  padding: 30px;
+  text-align: center;
+  background-color: #fff;
+}
+
+.about h2 {
+  color: #2e7d32;
+  margin-bottom: 15px;
+}
+
+footer {
+  background-color: #eee;
+  text-align: center;
+  padding: 15px;
+  margin-top: 20px;
+  font-size: 14px;
+}

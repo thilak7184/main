@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stored Feed Usage</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background-color: #2c3e50;
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    @media screen and (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      td {
+        padding: 10px;
+        border: none;
+        border-bottom: 1px solid #eee;
+      }
+
+      td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Stored Feed Usage</h1>
+  </header>
+
+  <main>
+    <h2>Feed Usage & Stock History</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Feed</th>
+          <th>Amount (kg)</th>
+          <th>Date & Time</th>
+        </tr>
+      </thead>
+      <tbody id="feedHistoryBody">
+        <tr><td colspan="4">Loading...</td></tr>
+      </tbody>
+    </table>
+  </main>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_rPTK-dEGNlz3kfFx3WTS579Fz0xt0nk",
+      authDomain: "attendance-system-31208.firebaseapp.com",
+      projectId: "attendance-system-31208",
+      storageBucket: "attendance-system-31208.firebasestorage.app",
+      messagingSenderId: "340644375850",
+      appId: "1:340644375850:web:a13eabd90f4dfbcdd80253"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadFeedHistory() {
+      const tableBody = document.getElementById("feedHistoryBody");
+      const q = query(collection(db, "feedHistory"), orderBy("timestamp", "desc"));
+      const snapshot = await getDocs(q);
+
+      tableBody.innerHTML = "";
+
+      if (snapshot.empty) {
+        tableBody.innerHTML = "<tr><td colspan='4'>No feed records found.</td></tr>";
+        return;
+      }
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const tr = document.createElement("tr");
+
+        const type = data.type === "usage" ? "Used" : "Stock Added";
+        const feed = data.feed || "Unknown";
+        const amount = data.amount + " kg";
+        const date = new Date(data.timestamp).toLocaleString();
+
+        tr.innerHTML = `
+          <td data-label="Type">${type}</td>
+          <td data-label="Feed">${feed}</td>
+          <td data-label="Amount">${amount}</td>
+          <td data-label="Date & Time">${date}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    loadFeedHistory();
+  </script>
+</body>
+</html>

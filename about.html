@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About | Sheep Shed</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      background: #f4f6f8;
+      color: #24344D;
+    }
+    header {
+      background: linear-gradient(90deg, #227649 0%, #236649 85%);
+      color: #fff;
+      padding: 32px 0 28px 0;
+      text-align: center;
+      box-shadow: 0 2px 18px rgba(36,90,55,0.08);
+      position: relative;
+      z-index: 1;
+    }
+    header h1 {
+      margin-bottom: 8px;
+      font-weight: 800;
+      font-size: 2.25rem;
+      letter-spacing: .6px;
+      letter-spacing: .04em;
+      text-shadow: 0 2px 10px rgba(36,90,55,0.08);
+    }
+   /* ==== Nav Styling Matching Feed Page ==== */
+nav {
+  display: inline-flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+nav a {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px; /* pill style */
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+nav a:hover,
+nav a.active {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+
+    .about {
+      max-width: 960px;
+      margin: 38px auto 30px auto;
+      background: #fff;
+      box-shadow: 0 4px 32px rgba(46,125,50,0.10);
+      border-radius: 19px;
+      padding: 48px 38px 36px 38px;
+      min-height: 370px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-title {
+      text-align: left;
+      color: #1c5133;
+      font-size: 2rem;
+      margin-bottom: 32px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .about-title i {
+      color: #34a272;
+      margin-right: 5px;
+      font-size: 1.8rem;
+    }
+
+    .about-container {
+      display: flex;
+      gap: 44px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .owner-img-box {
+      background: linear-gradient(150deg, #e3e9e7 20%, #dcf7e4 100%);
+      border-radius: 50%;
+      padding: 9px;
+      box-shadow: 0 4px 24px rgba(70,170,110,.11);
+      width: 184px; min-width: 184px;
+      height: 184px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      position: relative;
+    }
+    .owner-img {
+      width: 162px;
+      height: 162px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4.5px solid #2e7d32;
+      box-shadow: 0 2px 12px rgba(40,120,60,0.07);
+    }
+    .about-text {
+      flex: 1;
+      font-size: 1.07rem;
+      color: #34495e;
+      line-height: 1.7;
+      font-weight: 500;
+      padding-left: 0;
+      margin-bottom: 0;
+    }
+    .owner-name {
+      color: #237e40;
+      font-weight: bold;
+      font-size: 1.14em;
+      letter-spacing: .04em;
+    }
+
+    /* Highlighted Info Sections */
+    .info-block {
+      background: linear-gradient(90deg, #f2faef 70%, #e2ede8 100%);
+      border-radius: 11px;
+      padding: 20px 26px;
+      margin: 21px 0 0 0;
+      box-shadow: 0 1.5px 7px #d6f2e2;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 1.04rem;
+    }
+    .info-block h4, .info-block h3 {
+      margin-top: 0; margin-bottom: 12px;
+      color: #276a4a;
+      font-weight: 700;
+      font-size: 1.06rem;
+      letter-spacing: .025em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .info-block ul {
+      margin: 7px 0 0 14px;
+      padding: 0;
+      list-style: none;
+    }
+    .info-block li {
+      padding-left: 0;
+      margin-bottom: 5px;
+      font-size: 1.01em;
+    }
+    .info-block li:before {
+      content: "\2022";
+      color: #36b17b;
+      font-size: 1.1em;
+      margin-right: 7px;
+      vertical-align: middle;
+      position: relative;
+      top: -1.5px;
+    }
+
+    /* Location marker */
+    .info-block .fa-map-marker-alt {
+      color: #f3b808;
+      opacity: .93;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 700px) {
+      .about-container {
+        flex-direction: column;
+        gap: 26px;
+        text-align: center;
+        align-items: center;
+      }
+      .about-text {margin-top: 18px;}
+      .about { padding: 25px 7vw 27px 7vw;}
+    }
+    @media (max-width: 480px) {
+      .about { padding: 11px 2vw 20px 2vw;}
+      .about-title {font-size: 1.15rem;}
+    }
+    footer {
+      text-align: center;
+      padding: 23px 0 19px 0;
+      background: none;
+      margin-top: 29px;
+      font-size: 1.04rem;
+      color: #7b9190;
+      border-top: 1.5px solid #dcf3e2;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>About the Farm</h1>
+    <nav>
+      <a href="index.html"><i class="fas fa-home"></i> Home</a>
+      <a href="about.html" class="active"><i class="fas fa-user"></i> About</a>
+      <a href="feed.html"><i class="fas fa-seedling"></i> Feed</a>
+      <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+    </nav>
+  </header>
+
+  <section class="about">
+    <div class="about-title">
+      <i class="fas fa-info-circle"></i> About the Owner
+    </div>
+    <div class="about-container">
+      <div class="owner-img-box">
+        <img src="images/owner.jpg" alt="Owner Photo" class="owner-img">
+      </div>
+      <div class="about-text">
+        <p>
+          Our sheep shed is managed by <span class="owner-name">Mr. Sathish Kumar</span>, an experienced livestock farmer with over a decade of hands-on experience in breeding and raising Indian sheep.
+          <br>
+          <br>
+          With a herd of over 150 sheep, this shed focuses on efficient care, feeding, health monitoring, and record keeping. The project aims to streamline the management of the shed using modern technologies and data systems.
+        </p>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <h4><i class="fas fa-phone-volume"></i> Contact Numbers</h4>
+      <ul>
+        <li>Owner: <strong>9866900709</strong></li>
+        <li>Alternative: <strong>9014087671</strong></li>
+        <li>Worker: <strong>9391962152</strong></li>
+      </ul>
+    </div>
+    <div class="info-block">
+      <h3><i class="fas fa-map-marker-alt"></i> Farm Location</h3>
+      <ul>
+        <li>Village Name: <strong>Vittapalli</strong></li>
+        <li>Mandal: <strong>Parigi</strong></li>
+        <li>District: <strong>Sathya Sai</strong></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Sheep Shed Management. All rights reserved.
+  </footer>
+</body>
+</html>

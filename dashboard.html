@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+    }
+    /* Navbar */
+    .navbar {
+      background: linear-gradient(90deg, #155dab 0%, #186dd6 100%);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 44px;
+      height: 68px;
+    }
+    .navbar .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .navbar .nav-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #fff;
+      letter-spacing: 1px;
+      margin-left: 6px;
+    }
+    .navbar .nav-link {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: 500;
+      transition: color .18s;
+      font-size: 1rem;
+      opacity: 0.85;
+    }
+    .navbar .nav-link:hover {
+      color: #e3ecff;
+      opacity: 1;
+    }
+    .navbar .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .navbar .nav-btn {
+      background: #fff;
+      color: #186ed7;
+      border: none;
+      border-radius: 18px;
+      font-weight: bold;
+      padding: 8px 18px;
+      margin-left: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 1px 6px rgba(40,80,137,0.07);
+      transition: background 0.13s, color 0.13s;
+    }
+    .navbar .nav-btn:hover {
+      background: #e3edfd;
+      color: #11345e;
+    }
+
+    /* Hero section */
+    .hero {
+      background: linear-gradient(90deg, #186dd6 0%, #155dab 100%);
+      color: #fff;
+      padding-top: 48px;
+      padding-bottom: 68px;
+      text-align: center;
+      position: relative;
+    }
+    .hero h2 {
+      font-size: 2.7rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+    .hero p {
+      font-size: 1.18rem;
+      opacity: 0.94;
+      letter-spacing: .1px;
+      margin-bottom: 35px;
+      font-weight: 500;
+      color: #e8effe;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    /* Wave divider SVG */
+    .hero-wave {
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 100%;
+      height: 64px;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    /* Cards Section */
+    .card-section {
+      background: #fff;
+      min-height: 380px;
+      padding: 44px 0 32px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    .cards-container {
+      display: flex;
+      gap: 34px;
+      margin-top: 0;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .feature-card {
+      background: #fafdff;
+      border-radius: 22px;
+      box-shadow: 0 3px 21px rgba(36, 70, 160, 0.07);
+      padding: 38px 34px 26px 34px;
+      min-width: 230px;
+      max-width: 265px;
+      text-align: center;
+      flex: 1 1 250px;
+      margin: 14px 0;
+      transition: box-shadow .21s, transform .17s;
+      border: 1px solid #f1f7fd;
+    }
+    .feature-card:hover {
+      box-shadow: 0 7px 28px rgba(40,80,200,0.10);
+      transform: translateY(-6px) scale(1.017);
+      border-color: #d5e7fc;
+    }
+    .feature-icon {
+      font-size: 2.35rem;
+      margin-bottom: 16px;
+      color: #1763ce;
+      opacity: 0.92;
+    }
+    .feature-title {
+      font-size: 1.12rem;
+      font-weight: 700;
+      margin-bottom: 9px;
+      color: #103089;
+      letter-spacing: .1px;
+    }
+    .feature-desc {
+      font-size: 0.99rem;
+      color: #345898;
+      opacity: 0.93;
+    }
+    /* CTA section */
+    .cta-section {
+      text-align: center;
+      margin-top: 36px;
+      margin-bottom: 10px;
+    }
+    .cta-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+      margin-bottom: 0.85em;
+      margin-top: 0;
+      color: #2450b6;
+    }
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .cta-link {
+      background: linear-gradient(90deg, #186dd6 0%, #1cb3fd 100%);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 30px;
+      padding: 13px 34px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.17s, box-shadow .18s;
+      box-shadow: 0 2.5px 12px rgba(50,160,210,0.11);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 4px 0;
+    }
+    .cta-link:hover {
+      background: linear-gradient(90deg, #1356aa 0%, #169bdf 100%);
+      box-shadow: 0 4px 18px rgba(10,70,130,0.21);
+    }
+    footer {
+      margin-top: 40px;
+      padding: 20px 0 30px 0;
+      text-align: center;
+      color: #8595af;
+      background: none;
+      font-size: .98rem;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+    }
+    @media (max-width: 800px) {
+      .cards-container {
+        flex-direction: column;
+        gap: 25px;
+        align-items: center;
+      }
+      .feature-card {
+        max-width: 99vw;
+        min-width: 92vw;
+        padding: 30px 14vw 20px 14vw;
+      }
+    }
+    @media (max-width: 500px) {
+      .navbar { flex-direction: column; height: auto; padding: 0 8px; gap: 5px;}
+      .hero h2 {font-size: 2.1rem;}
+      .feature-card {padding: 18px 6vw 12px 6vw;}
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <span class="nav-title"><i class="fas fa-leaf"></i> Impact Dashboard</span>
+      <a href="#" class="nav-link">Overview</a>
+      <a href="#" class="nav-link">Reports</a>
+      <a href="#" class="nav-link">Support</a>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn" disabled>Upgrade</button>
+    </div>
+  </nav>
+  <div class="hero">
+    <h2></h2>
+    <p>
+      Mark attendence and Manage the feed stock.
+    </p>
+    <svg class="hero-wave" viewBox="0 0 1440 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 19C139.5 69.5 286.5 69.5 472 19C666.5-34.5 805.5-40 1089.5 19C1225.65 45.09 1292.5 52.81 1440 19V70H0V19Z" fill="#fff"/>
+    </svg>
+  </div>
+  <section class="card-section">
+    <div class="cards-container">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-user-check"></i></div>
+        <div class="feature-title">Attendance</div>
+        <div class="feature-desc">Mark your attendance instantly and stay updated with your daily record. Hassle-free for students and admins.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-warehouse"></i></div>
+        <div class="feature-title">Feed Stock</div>
+        <div class="feature-desc">Add or monitor feed stock in real-time. Keep resources optimized and never run out unexpectedly.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-seedling"></i></div>
+        <div class="feature-title">Feed Usage</div>
+        <div class="feature-desc">Track feed usage history for performance and planning. See trends and usage details anytime.</div>
+      </div>
+    </div>
+    <div class="cta-section">
+      <div class="cta-title">Get started in just one click</div>
+      <div class="cta-buttons">
+       <a href="mark-attendence.html" class="cta-link">
+  <i class="fas fa-calendar-check"></i> Mark Attendance</a>
+
+        <a href="history.html" class="cta-link"><i class="fas fa-clock-rotate-left"></i> Attendance History</a>
+        <a href="view-feed-usage.html" class="cta-link"><i class="fas fa-warehouse"></i> Feed Stock Management</a>
+        <a href="stored-feed-usage.html" class="cta-link"><i class="fas fa-seedling"></i> Feed Usage History</a>
+      </div>
+    </div>
+  </section>
+  <footer>
+    &copy; 2025 Feed Management System by G Thilak kumar.
+  </footer>
+  <script type="module" src="./script.js"></script>
+</body>
+</html>
