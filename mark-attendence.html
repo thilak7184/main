@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Mark Attendance | Sheep Shed</title>
+  <title>Daily Food Feeding Tracker | Sheep Shed</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link
     rel="stylesheet"
@@ -16,78 +16,101 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
+      padding: 20px;
     }
 
     .card {
       background: #fff;
-      padding: 30px 40px;
+      padding: 30px 30px;
       border-radius: 20px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
       text-align: center;
-      max-width: 400px;
-      width: 90%;
+      max-width: 450px;
+      width: 100%;
     }
 
-    .card h1 {
+    h1 {
       font-size: 24px;
+      color: #1e3a8a;
       margin-bottom: 10px;
+    }
+
+    .user-email, .date {
+      color: #444;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .feed-section {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .feed-section h3 {
+      margin: 0 0 8px;
       color: #1e3a8a;
     }
 
-    .date,
-    .user-email {
-      font-size: 16px;
-      color: #555;
-      margin-bottom: 10px;
+    label {
+      font-weight: bold;
+      font-size: 14px;
+      display: block;
+      margin-top: 8px;
     }
 
-    .btn {
+    select, input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    button {
       background-color: #10b981;
       color: white;
-      padding: 14px 28px;
-      font-size: 16px;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
+      padding: 10px 18px;
+      margin-top: 10px;
       cursor: pointer;
       transition: background 0.3s ease;
+      font-size: 14px;
     }
 
-    .btn:hover:not(:disabled) {
+    button:hover:enabled {
       background-color: #059669;
     }
 
-    .btn:disabled {
+    button:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
 
     #statusMessage {
       margin-top: 20px;
-      font-size: 16px;
       font-weight: bold;
+      font-size: 15px;
     }
 
-    .success {
-      color: green;
-    }
-
-    .error {
-      color: red;
-    }
-
-    .success i,
-    .error i {
-      margin-right: 8px;
-    }
+    .success { color: green; }
+    .error { color: red; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1><i class="fas fa-calendar-check"></i> Mark Attendance</h1>
+    <h1><i class="fas fa-utensils"></i> Daily Food Feeding Tracker</h1>
     <div class="user-email" id="userEmail">Loading user...</div>
     <div class="date" id="todayDate"></div>
-    <button class="btn" id="markAttendanceBtn" disabled>Loading...</button>
+
+    <div id="feedSections"></div>
+
     <p id="statusMessage"></p>
   </div>
 
@@ -96,18 +119,17 @@
     import {
       getFirestore,
       collection,
-      query,
-      where,
-      getDocs,
       addDoc,
       serverTimestamp,
+      query,
+      where,
+      getDocs
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import {
       getAuth,
-      onAuthStateChanged,
+      onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    // Firebase config (corrected storageBucket field)
     const firebaseConfig = {
       apiKey: "AIzaSyC_rPTK-dEGNlz3kfFx3WTS579Fz0xt0nk",
       authDomain: "attendance-system-31208.firebaseapp.com",
@@ -123,87 +145,98 @@
 
     const userEmailElem = document.getElementById("userEmail");
     const todayDateElem = document.getElementById("todayDate");
-    const markBtn = document.getElementById("markAttendanceBtn");
     const statusMsg = document.getElementById("statusMessage");
+    const feedContainer = document.getElementById("feedSections");
 
     const today = new Date();
     const dateStr = today.toISOString().split("T")[0];
     todayDateElem.textContent = `Today's Date: ${dateStr}`;
 
+    const feedTimings = ["Morning Feed", "Noon Feed", "Evening Feed", "Night Feed"];
+    const feedTypes = ["Corn", "Sneha Poultry Feed", "Dry Grass", "Mineral Mix + Water"];
+
     let currentUser = null;
 
-    function disableButton(text) {
-      markBtn.disabled = true;
-      markBtn.textContent = text;
+    async function isFeedMarked(timing) {
+      const q = query(
+        collection(db, "foodHistory"),
+        where("userId", "==", currentUser.uid),
+        where("date", "==", dateStr),
+        where("timing", "==", timing)
+      );
+      const snapshot = await getDocs(q);
+      return !snapshot.empty;
     }
 
-    function enableButton(text) {
-      markBtn.disabled = false;
-      markBtn.textContent = text;
-    }
+    async function createFeedSections() {
+      for (let timing of feedTimings) {
+        const div = document.createElement("div");
+        div.className = "feed-section";
+        const alreadyMarked = await isFeedMarked(timing);
+        div.innerHTML = `
+          <h3>${timing}</h3>
+          <label>Feed Type:</label>
+          <select id="${timing}-type">
+            ${feedTypes.map(feed => `<option value="${feed}">${feed}</option>`).join("")}
+          </select>
+          <label>Quantity (kg):</label>
+          <input type="number" id="${timing}-quantity" placeholder="Enter quantity">
+          <button id="${timing}-btn" ${alreadyMarked ? "disabled" : ""}>
+            ${alreadyMarked ? "✅ Feed Marked" : "Mark Feed Given"}
+          </button>
+        `;
+        feedContainer.appendChild(div);
 
-    async function checkAttendanceForToday(userId) {
-      try {
-        console.log("Checking attendance for user:", userId, "date:", dateStr);
-        const attendanceRef = collection(db, "sheepAttendance");
-        const q = query(
-          attendanceRef,
-          where("userId", "==", userId),
-          where("date", "==", dateStr)
-        );
-        const querySnapshot = await getDocs(q);
-        console.log("Query snapshot size:", querySnapshot.size);
-        return !querySnapshot.empty;
-      } catch (err) {
-        console.error("Error checking attendance:", err);
-        return false;
+        if (!alreadyMarked) {
+          document.getElementById(`${timing}-btn`).addEventListener("click", () => markFeed(timing));
+        }
       }
     }
 
-    async function markAttendance() {
-      disableButton("Marking...");
-      statusMsg.textContent = "";
+    async function markFeed(timing) {
+      const feedType = document.getElementById(`${timing}-type`).value;
+      const quantity = document.getElementById(`${timing}-quantity`).value;
+
+      if (!quantity) {
+        alert("Please enter quantity before saving.");
+        return;
+      }
 
       try {
-        await addDoc(collection(db, "sheepAttendance"), {
+        await addDoc(collection(db, "foodHistory"), {
           userId: currentUser.uid,
           userEmail: currentUser.email,
+          timing,
+          feedType,
+          quantity,
           date: dateStr,
-          timestamp: serverTimestamp(),
+          timestamp: serverTimestamp()
         });
 
-        statusMsg.innerHTML = `<i class="fas fa-check-circle"></i> Attendance marked successfully for ${dateStr}`;
+        const btn = document.getElementById(`${timing}-btn`);
+        btn.disabled = true;
+        btn.textContent = "✅ Feed Marked";
+
+        statusMsg.innerHTML = `<i class="fas fa-check-circle"></i> ${timing} recorded successfully!`;
         statusMsg.className = "success";
-        disableButton("✅ Attendance Marked");
+
+        document.getElementById(`${timing}-quantity`).value = "";
       } catch (error) {
-        console.error("Error marking attendance:", error);
-        statusMsg.innerHTML = `<i class="fas fa-times-circle"></i> Failed to mark attendance. Please try again.`;
+        console.error("Error saving feed:", error);
+        statusMsg.innerHTML = `<i class="fas fa-times-circle"></i> Error saving ${timing}.`;
         statusMsg.className = "error";
-        enableButton("Mark Attendance");
       }
     }
 
     onAuthStateChanged(auth, async (user) => {
-      console.log("Auth state changed:", user);
       if (!user) {
-        alert("You must be logged in to mark attendance.");
+        alert("Please log in to access this page.");
         window.location.href = "index.html";
         return;
       }
       currentUser = user;
       userEmailElem.textContent = `Logged in as: ${user.email}`;
-
-      const alreadyMarked = await checkAttendanceForToday(user.uid);
-      console.log("Already marked today?", alreadyMarked);
-
-      if (alreadyMarked) {
-        disableButton("✅ Attendance Already Marked");
-        statusMsg.innerHTML = `<i class="fas fa-info-circle"></i> You have already marked attendance today.`;
-        statusMsg.className = "success";
-      } else {
-        enableButton("Mark Attendance");
-        markBtn.addEventListener("click", markAttendance);
-      }
+      createFeedSections();
     });
   </script>
 </body>
