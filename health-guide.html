@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sheep Health Guide</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+    }
+    nav {
+      background: #186dd6;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 30px;
+      align-items: center;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: 500;
+    }
+    nav a:hover { text-decoration: underline; }
+    .container { padding: 20px; max-width: 1000px; margin: auto; }
+    h1 { color: #155dab; margin-bottom: 20px; text-align: center; }
+    .cards { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-bottom: 30px; }
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      min-width: 220px;
+      flex: 1 1 200px;
+      text-align: center;
+    }
+    .card h3 { margin-bottom: 10px; color: #186dd6; }
+    canvas { background: #fff; border-radius: 15px; padding: 10px; }
+    ul { list-style: disc inside; padding-left: 0; }
+    ul li { margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <span><i class="fas fa-heartbeat"></i> Sheep Health Guide</span>
+    <div>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="mark-attendence.html">Feed Entry</a>
+      <a href="stored-feed-usage.html">Feed History</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Health Overview & Suggestions</h1>
+
+    <!-- Health Summary Cards -->
+    <div class="cards">
+      <div class="card">
+        <h3>Today's Feed Given</h3>
+        <p id="today-feed">Loading...</p>
+      </div>
+      <div class="card">
+        <h3>Average Feed Quantity</h3>
+        <p id="avg-feed">Loading...</p>
+      </div>
+      <div class="card">
+        <h3>Sheep Health Status</h3>
+        <p id="sheep-status">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Feed Trend Chart -->
+    <h2 style="text-align:center; color:#155dab;">Feed Trend (Last 7 Days)</h2>
+    <canvas id="feedChart" width="800" height="350"></canvas>
+
+    <!-- Health Suggestions -->
+    <h2 style="color:#155dab; margin-top:30px;">Health Suggestions</h2>
+    <ul id="health-suggestions">
+      <li>Loading suggestions...</li>
+    </ul>
+  </div>
+
+  <!-- Firebase and Chart.js Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import Chart from "https://cdn.jsdelivr.net/npm/chart.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_rPTK-dEGNlz3kfFx3WTS579Fz0xt0nk",
+      authDomain: "attendance-system-31208.firebaseapp.com",
+      projectId: "attendance-system-31208",
+      storageBucket: "attendance-system-31208.appspot.com",
+      messagingSenderId: "340644375850",
+      appId: "1:340644375850:web:a13eabd90f4dfbcdd80253",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const todayFeedElem = document.getElementById("today-feed");
+    const avgFeedElem = document.getElementById("avg-feed");
+    const sheepStatusElem = document.getElementById("sheep-status");
+    const healthSuggestionsElem = document.getElementById("health-suggestions");
+
+    let feedData = [];
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { 
+        alert("Please log in to view this page."); 
+        window.location.href = "index.html"; 
+        return; 
+      }
+
+      const today = new Date().toISOString().split("T")[0];
+
+      // Fetch today's feed
+      const qToday = query(collection(db, "foodHistory"), where("date", "==", today));
+      const snapshotToday = await getDocs(qToday);
+      let totalToday = 0;
+      snapshotToday.forEach(doc => totalToday += parseFloat(doc.data().quantity));
+      todayFeedElem.textContent = totalToday ? totalToday + " kg" : "No feed recorded today";
+
+      // Fetch last 7 days feed
+      const q7days = query(collection(db, "foodHistory"), orderBy("date", "desc"), limit(50));
+      const snapshot7 = await getDocs(q7days);
+      const dailyMap = {};
+      snapshot7.forEach(doc => {
+        const data = doc.data();
+        dailyMap[data.date] = (dailyMap[data.date] || 0) + parseFloat(data.quantity);
+      });
+
+      const labels = Object.keys(dailyMap).reverse();
+      const quantities = Object.values(dailyMap).reverse();
+      const avgQuantity = quantities.reduce((a,b)=>a+b,0)/quantities.length || 0;
+      avgFeedElem.textContent = avgQuantity.toFixed(2) + " kg";
+
+      // Simple health status based on avg feed
+      if(avgQuantity >= 25) sheepStatusElem.textContent = "All healthy 👍";
+      else if(avgQuantity >= 15) sheepStatusElem.textContent = "Moderate feed 🟡";
+      else sheepStatusElem.textContent = "Low feed ❗";
+
+      // Render chart
+      const ctx = document.getElementById("feedChart").getContext("2d");
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            label: "Feed Quantity (kg)",
+            data: quantities,
+            borderColor: "#186dd6",
+            backgroundColor: "rgba(24,109,214,0.2)",
+            tension: 0.3,
+            fill: true,
+            pointRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+
+      // Health suggestions (simple static + dynamic based on avg)
+      healthSuggestionsElem.innerHTML = "";
+      const suggestions = [
+        "Ensure Sneha Poultry Feed is given in the morning for growth.",
+        "Dry Grass helps in digestion; give in moderation.",
+        "Mineral Mix + Water twice a week keeps sheep healthy."
+      ];
+      if(avgQuantity < 20) suggestions.push("Feed quantity is low, consider increasing daily feed.");
+      suggestions.forEach(s => {
+        const li = document.createElement("li");
+        li.textContent = s;
+        healthSuggestionsElem.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>
